@@ -1,4 +1,5 @@
 from app.db.models import Chunk
+from sqlalchemy.orm import Session
 from app.services.embedder import Embedder
 from app.services.vector_store import VectorStore
 
@@ -7,7 +8,7 @@ class RetrievalService:
         self.embedder = embedder
         self.vector_store = vector_store
 
-    def retrieve(self, db, *, question: str, document_id: str, top_k: int = 5) -> list[Chunk]:
+    def retrieve(self, db: Session, *, question: str, document_id: str, top_k: int = 5) -> list[Chunk]:
         if not question or not question.strip():
             raise ValueError("question must not be empty")
 

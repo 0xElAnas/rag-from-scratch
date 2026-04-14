@@ -2,19 +2,21 @@
 
 ## What this is
 
-Small RAG project to understand how things work under the hood.
+Small RAG project to understand how things work end-to-end.
 
-Right now focused on the ingestion part (getting data into a vector DB).
+Current focus: ingestion + retrieval + generation (full backend pipeline working).
 
 ---
 
-## What works so far
+## What works
 
 - Parse PDF files (page by page)
 - Split text into chunks (with overlap)
 - Generate embeddings (OpenAI)
-- Store everything in Postgres (pgvector)
-- Simple ingestion pipeline that ties everything together
+- Store chunks + embeddings in Postgres (pgvector)
+- Retrieve relevant chunks using vector similarity
+- Build grounded prompts from retrieved context
+- Generate answers using LLM
 
 ---
 
@@ -22,58 +24,91 @@ Right now focused on the ingestion part (getting data into a vector DB).
 
 ```text
 PDF → parse → chunk → embed → store
+
+question → embed → retrieve → build prompt → generate answer
 ```
 
 ---
 
 ## How to test
 
-Run:
+### Ingestion
 
 ```bash
 python -m app.scripts.test_ingestion
 ```
 
-You should see something like:
+### Retrieval
 
-```text
-Ingestion completed
-Status: ready
-Chunks stored: X
+```bash
+python -m app.scripts.test_retrieval
+```
+
+### Full RAG (end-to-end)
+
+```bash
+python -m app.scripts.test_full_rag
 ```
 
 ---
 
 ## Tech
 
-- FastAPI (not used yet, but planned)
+- FastAPI (API layer coming next)
 - PostgreSQL + pgvector (Docker)
 - SQLAlchemy
-- OpenAI embeddings
+- OpenAI (embeddings + generation)
+
+---
+
+## Project structure (simplified)
+
+```text
+app/
+  services/
+    pdf_parser.py
+    chunker.py
+    embedder.py
+    ingestion_service.py
+    vector_store.py
+    retrieval_service.py
+    prompt_builder.py
+    generation_service.py
+
+  db/
+    session.py
+    models.py
+    init_db.py
+
+  scripts/
+    test_ingestion.py
+    test_retrieval.py
+    test_full_rag.py
+
+  core/
+    config.py
+
+  api/ (next step)
+  main.py
+```
 
 ---
 
 ## Notes
 
-- keeping things simple for now (no retries, no fancy logic)
-- chunking is basic (char-based)
-- no retrieval yet
+- keeping V1 simple (no retries, no reranking, no hybrid search)
+- chunking is basic (character-based)
+- single-document retrieval for now
+- prompt is simple but grounded
 
 ---
 
 ## Next
 
-- implement vector search (top-k retrieval)
-- plug into a simple chat endpoint
+- add API routes:
+  - `POST /documents` (upload + ingest)
+  - `POST /chat` (ask questions)
 
----
-
-## Why this project
-
-Trying to actually understand:
-
-- embeddings
-- vector search
-- how RAG works end-to-end
-
-Not just copy tutorials.
+- improve chunking
+- add evaluation dataset
+- add logging / tracing

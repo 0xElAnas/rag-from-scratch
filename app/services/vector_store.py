@@ -1,10 +1,11 @@
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 from app.db.models import Chunk
 
 class VectorStore:
     def similarity_search(
         self,
-        db,
+        db: Session,
         *,
         query_embedding: list[float],
         document_id: str,
