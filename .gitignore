@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Logs / temp
+*.log
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Database (if local files ever used)
+*.sqlite3
+
+# Misc
+todo.md
