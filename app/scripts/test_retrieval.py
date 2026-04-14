@@ -1,24 +1,26 @@
 from app.db.session import SessionLocal
+from app.services import embedder
 from app.services.embedder import Embedder
+from app.services.retrieval_service import RetrievalService
 from app.services.vector_store import VectorStore
 
 def main():
     db = SessionLocal()
-    
-    embedder = Embedder()
-    vectore_store = VectorStore() 
-
-    query = "How many vacation days do employees get?"
-    query_emebedding = embedder.embed_query(query)
 
     document_id = "102a1da6-c000-4e95-8cca-37d44ce061b1"
+    query = "How many vacation days do employees get?"
+    
+    retrieval_service = RetrievalService(
+        embedder=Embedder(),
+        vector_store=VectorStore()
+    )
 
-    results = vectore_store.similarity_search(
+    results = retrieval_service.retrieve(
         db=db,
-        query_embedding=query_emebedding,
+        question=query,
         document_id=document_id,
         top_k=5
-    )
+    )   
     
     print("Top similar chunks:")
     for chunk in results:
